@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <com.google.android.maps.MapView
+        android:id="@+id/MapView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:apiKey="02bXjUBV7NOzoKV_oKPndxK7lBaBiUVwik5_rSQ"
+        android:clickable="true"
+        android:enabled="true" />
+
+    <TableLayout
+        android:id="@+id/TableLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:baselineAligned="false"
+        android:orientation="horizontal" >
+
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" >
+
+            <Button
+                android:id="@+id/backB"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="@string/back_str" />
+
+            <Button
+                android:id="@+id/selectB"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:text="@string/select_loc" />
+
+        </TableRow>
+
+    </TableLayout>
+
+    <ToggleButton
+        android:id="@+id/mapModeTB"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="41dp"
+        android:gravity="center"
+        android:text="@string/map_mode"
+        android:textOff="Pan/Zoom Mode"
+        android:textOn="Marker Mode" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/TableLayout1"
+        android:text="TextView"
+        android:visibility="invisible" />
+
+</RelativeLayout>

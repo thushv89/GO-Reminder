@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, WelcomActivity!</string>
+    <string name="app_name">GO-Reminder_v2.0</string>
+    <string name="select_loc">Select Location</string>
+    <string name="back_str">Back</string>
+    <string name="view_memo_str">View Memos</string>
+    <string name="map_mode">Pan/Zoom Mode</string>
+    <string name="tag_str">Tag friends</string>
+    <string name="empty_str"></string>
+    <string name="welcom_str">Welcome to GO-Reminder!</string>
+    <string name="name_str">Name</string>
+    <string name="desc_str">Description</string>
+    <string name="subject_str">Subject</string>
+    <string name="save_str">Save</string>
+    <string name="cat_shop_str">Shop</string>
+    <string name="cat_family_str">Family</string>
+    <string name="cat_work_str">Work</string>
+    <string name="cat_friends_str">Friends</string>
+    <string name="cat_other_str">Other</string>
+    <string name="save_loc_str">Save Location</string>
+
+</resources>

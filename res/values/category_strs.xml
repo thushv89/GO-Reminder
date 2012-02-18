@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="category_prompt">Choose a "Location Category"</string>
+    <string-array name="category_array">
+        <item>Family</item>
+        <item>Shopping</item>
+        <item>Friends</item>
+        <item>Work</item>
+        <item>Other</item>
+    </string-array>
+</resources>
