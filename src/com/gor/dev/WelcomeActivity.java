@@ -8,9 +8,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class WelcomeActivity extends Activity {
+
 
 	/** Called when the activity is first created. */	
 	@Override
@@ -22,7 +24,8 @@ public class WelcomeActivity extends Activity {
 		GridView gView= (GridView)findViewById(R.id.gridView1);
 		ButtonAdapter bAdapter = new ButtonAdapter(this,getLayoutInflater());
 		gView.setAdapter(bAdapter);
-		
+
+		startService(new Intent(this,NotificationService.class));
 		//simple test to start a new service
 		if(CommonUtils.started && !CommonUtils.ended){
 			//b.setEnabled(true);

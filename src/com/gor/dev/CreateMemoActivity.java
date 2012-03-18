@@ -49,12 +49,13 @@ public class CreateMemoActivity extends Activity{
 
 	double[] location;
 	String locationAddress;
+	Boolean isEditScreen=false;
 	/**	This method validates the view before save is performed. If not validated 
 	 * false will be returned.
 	 * @return	tells whether all the necessary fields are filled
 	 */
 	private boolean validate(){
-		if(subjectET.getText()==null || "".equals(subjectET.getText())){
+		if(subjectET.getText().toString()==null || "".equals(subjectET.getText().toString())){
 			return false;
 		}
 		String dateRegExp="^(0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])[- /.](19|20)\\d\\d$";
@@ -73,6 +74,7 @@ public class CreateMemoActivity extends Activity{
 		}
 		return true;
 	}
+	
 	/**This class takes care of events to trigger for each button click
 	 * @author Thushan
 	 *
@@ -85,26 +87,36 @@ public class CreateMemoActivity extends Activity{
 				startActivity(new Intent(v.getContext(),WelcomeActivity.class));
 			}
 			else if(v.getId()==selectLocB.getId()){
-				Memo memo=makeAMemoNow();
+				Memo memo=makeAMemoNow("temp_id");
 				IOHandler.WriteObject(memo, workingDir+"/"+"temp.mem");
+				startActivity(new Intent(v.getContext(),MyLocationActivity.class));
+			}
+			else if(v.getId()==dateTimeCB.getId()){
+				if(dateTimeCB.isChecked()){
+					memoDate.setEnabled(true);
+					memoTime.setEnabled(true);
+				}else{
+					memoDate.setEnabled(false);
+					memoTime.setEnabled(false);
+				}
 			}
 			else if(v.getId()==saveMemoB.getId()){	
 				Boolean validated=validate();
 				if(validated){
-					Memo memo=makeAMemoNow();
+					String currentTimeDateStr=CommonUtils.getCurrentDateTimeString();
+					Memo memo=makeAMemoNow(currentTimeDateStr);
 					IOHandler.WriteObject(memo, 
-							workingDir+"/"+CommonUtils.getCurrentDateTimeString()+".mem");
-
+							workingDir+"/"+currentTimeDateStr+".mem");
+					Toast.makeText(v.getContext(), "Memo saved successfully", Toast.LENGTH_SHORT).show();
 					startActivity(new Intent(v.getContext(),WelcomeActivity.class));
 				}
 				else{
-					Toast.makeText(v.getContext(), "Subject must be specified", Toast.LENGTH_SHORT);
+					Toast.makeText(v.getContext(), "Please enter valid information", Toast.LENGTH_SHORT).show();
 				}
 			}
 		}
 
 	}
-
 
 	EditText subjectET;
 	EditText memoDate;
@@ -112,69 +124,53 @@ public class CreateMemoActivity extends Activity{
 	Button selectLocB;
 	Button saveMemoB;
 	Button backB;
-	TabHost tabHost;
-	Intent dateTimeIntent;
-	Intent locationIntent;
-	View locationTabView;
+	TextView locV;
+	CheckBox dateTimeCB;
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
+		
+		ScrollView sView=(ScrollView)findViewById(R.id.scrollView1);
 		setContentView(R.layout.creatememo);
-
 		workingDir=getFilesDir()+"/Memos";
-
+		
 		subjectET=(EditText)findViewById(R.id.subjectET);
+		locV=(TextView)findViewById(R.id.locDetails);
 		saveMemoB=(Button)findViewById(R.id.saveB);
 		backB=(Button)findViewById(R.id.backB);
+		dateTimeCB=(CheckBox)findViewById(R.id.setDateTimeCB);
 		
-		LayoutInflater inflater = (LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View v=inflater.inflate(R.layout.datetime_tab, null, false);
-		memoDate=(EditText)v.findViewById(R.id.dateET);
-		memoTime=(EditText)v.findViewById(R.id.timeEt);
-		locationTabView=inflater.inflate(R.layout.location_tab, null, false);
-		selectLocB=(Button) locationTabView.findViewById(R.id.selectLocB);
+		memoDate=(EditText)findViewById(R.id.dateET);
+		memoTime=(EditText)findViewById(R.id.timeEt);
+		memoDate.setEnabled(false);
+		memoTime.setEnabled(false);
 		
-		tabHost=(TabHost) findViewById(R.id.my_tabhost);
-		LocalActivityManager mLocalActivityManager = new LocalActivityManager(this, false);
-		mLocalActivityManager.dispatchCreate(savedInstanceState);
-		tabHost.setup(mLocalActivityManager);
-
-		dateTimeIntent=new Intent(this,DateTimeTabActivity.class);
-		locationIntent=new Intent(this,LocationTabActivity.class);
-		
-		TabSpec tspec1 = tabHost.newTabSpec("date_time_tab");
-		tspec1.setIndicator("Date & Time").setContent(dateTimeIntent);
-		tabHost.addTab(tspec1);
-
-		TabSpec tspec2 = tabHost.newTabSpec("location_tab");
-		tspec2.setIndicator("Location").setContent(locationIntent);;
-		tabHost.addTab(tspec2);
-
-		subjectET.requestFocus();
-		tabHost.clearFocus();
+		selectLocB=(Button)findViewById(R.id.selectLocB);
+			
 		Object temp;
 		if((temp= IOHandler.ifExistDelete(workingDir, "temp.mem"))!=null){
 			fillViewsWithMemo((Memo)temp);
 		}
 
 		backB.setOnClickListener(new ButtonHandler());
-		//selectLocB.setOnClickListener(new ButtonHandler());
+		selectLocB.setOnClickListener(new ButtonHandler());
 		saveMemoB.setOnClickListener(new ButtonHandler());
-
+		dateTimeCB.setOnClickListener(new ButtonHandler());
 
 		Bundle extras=getIntent().getExtras();
 		if(extras!=null){
 			location = extras.getDoubleArray("selectedCoordinates");
 			locationAddress=extras.getString("selectedLocAddress");
 			if(location!=null){
-				String locStr=locationAddress+" "+location[0]+" , "+location[1];
-				//locV.setText(locStr);
+				
+				locV.setText(CommonUtils.getFormattedLocationString(location, locationAddress));
 			}
 			Memo editMemo=(Memo)extras.getSerializable("editMemo");
 			if(editMemo!=null){
 				fillViewsWithMemo(editMemo);
+				isEditScreen=true;
 			}
 		}
 	}
@@ -185,31 +181,33 @@ public class CreateMemoActivity extends Activity{
 	 */
 	private void fillViewsWithMemo(Memo m){
 		subjectET.setText(m.getSubject());
-		//memoDate.set
+		memoDate.setText(m.getDate());
+		memoTime.setText(m.getTime());
+		
+		if(m.isDateTimeEnabled()){
+			dateTimeCB.setEnabled(true);
+		}else{
+			dateTimeCB.setEnabled(false);
+		}
+		
+		if(m.getCoordinates()!=null){
 		location=m.getCoordinates();
+		locV.setText("Lat:"+location[0]+", Lon:"+location[1]);
+		}
 	}
 
 	/**Returns a instance of memo with currently available data on views
 	 * @return	New instance of memo created
 	 */
-	private Memo makeAMemoNow(){
-		Date date=new Date();
-		String[] dateTokens=memoDate.getText().toString().split("/");
-		date.setDate(Integer.parseInt(dateTokens[1]));
-		date.setMonth(Integer.parseInt(dateTokens[0]));
-		date.setYear(Integer.parseInt(dateTokens[2]));					
-
-		Time time=new Time();
-		String trimmedEnd=memoTime.getText().toString().replace("am","");
-		trimmedEnd=trimmedEnd.replace("pm","");
-
-		String[] timeTokens=trimmedEnd.split(":");
-		time.hour= Integer.parseInt(timeTokens[0]);
-		time.minute=Integer.parseInt(timeTokens[1]);
-
-		String timeStr=CommonUtils.timeToString(time);
-
-		Memo memo=new Memo(subjectET.getText().toString(),date,timeStr,location);
+	private Memo makeAMemoNow(String id){
+		
+		String timeStr=memoTime.getText().toString();
+		String dateStr=memoDate.getText().toString();
+		Boolean dateTimeEnabled=false;
+		if(dateTimeCB.isChecked()){
+			dateTimeEnabled=true;
+		}
+		Memo memo=new Memo(id,subjectET.getText().toString(),dateStr,timeStr,dateTimeEnabled,location);
 
 		return memo;
 	}

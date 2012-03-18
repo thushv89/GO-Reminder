@@ -9,6 +9,7 @@ import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
+import com.gor.dev.util.CommonUtils;
 
 import android.content.Context;
 import android.content.Intent;
@@ -25,6 +26,7 @@ import android.location.LocationManager;
 
 import android.os.Bundle;
 import android.os.Message;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -42,7 +44,7 @@ import android.widget.ToggleButton;
 public class MyLocationActivity extends MapActivity{
 
 	LocationManager lManager;	//location manager to obtain GPS service
-	LocationListener lListener;	//get user's current location periodically
+	//LocationListener lListener;	//get user's current location periodically
 	Location location;
 	MapController mControl;	//Control properties of the map view
 	GeoPoint gPoint;	//Geo point represent a single pair of longitude, lattitude
@@ -86,10 +88,10 @@ public class MyLocationActivity extends MapActivity{
 					//get pixels of the selected location
 					selectedLoc=((MapView) mView).getProjection().fromPixels((int)event.getX(),(int)event.getY());
 					Toast.makeText(getBaseContext(), 
-							p.getLatitudeE6() / 1E6 + "," + p.getLongitudeE6() /1E6 , 
+							getAddress(p)+";"+p.getLatitudeE6() / 1E6 + "," + p.getLongitudeE6() /1E6 , 
 							Toast.LENGTH_SHORT).show();
 
-					//pw.showAtLocation(mView, Gravity.RIGHT & Gravity.BOTTOM, (int)event.getX(), (int)event.getY());
+					//pw.showAtLocation(mView, Gravity.CENTER_HORIZONTAL, (int)event.getX(), (int)event.getY());
 				}
 			}
 
@@ -107,7 +109,7 @@ public class MyLocationActivity extends MapActivity{
 				startActivity(new Intent(v.getContext(), WelcomeActivity.class));
 			}//If 'select location' button was clicked
 			else if(v.getId()==selectB.getId()){
-				double[] coordinates={selectedLoc.getLatitudeE6()/1E6,selectedLoc.getLongitudeE6()/1E6};
+				double[] coordinates={selectedLoc.getLatitudeE6(),selectedLoc.getLongitudeE6()};
 				Intent createMemoIntent=new Intent(getApplicationContext(),CreateMemoActivity.class);
 				createMemoIntent.putExtra("selectedCoordinates", coordinates);
 				createMemoIntent.putExtra("selectedLocAddress", getAddress(selectedLoc));
@@ -120,7 +122,17 @@ public class MyLocationActivity extends MapActivity{
 					mView.setOnTouchListener(new MyTouchListener());
 				}
 			}else if(v.getId()==saveLocB.getId()){
-				startActivity(new Intent(v.getContext(), SaveLocationActivity.class));
+				double[] coordinates={selectedLoc.getLatitudeE6(),selectedLoc.getLongitudeE6()};
+				Intent saveLoc=new Intent(v.getContext(), SaveLocationActivity.class);
+				saveLoc.putExtra("selectedCoordinates", coordinates);
+				saveLoc.putExtra("selectedLocAddress", getAddress(selectedLoc));
+				startActivity(saveLoc);
+			}else if(v.getId()==tagFriendsB.getId()){
+				double[] coordinates={selectedLoc.getLatitudeE6(),selectedLoc.getLongitudeE6()};
+				Intent tagFriends=new Intent(v.getContext(),TagFriendsActivity.class);
+				tagFriends.putExtra("selectedCoordinates", coordinates);
+				tagFriends.putExtra("selectedLocAddress", getAddress(selectedLoc));
+				startActivity(tagFriends);
 			}
 		}
 	}
@@ -168,8 +180,11 @@ public class MyLocationActivity extends MapActivity{
 				if(event.getAction()==MotionEvent.ACTION_UP){
 					//If marker mode is selected
 					if(mapModeTB.isChecked()){
-						//show the popup window
 						selectedLoc=((MapView) mV).getProjection().fromPixels((int)event.getX(),(int)event.getY());
+						Toast.makeText(getBaseContext(), 
+								selectedLoc.getLatitudeE6() / 1E6 + "," + selectedLoc.getLongitudeE6() /1E6 , 
+								Toast.LENGTH_SHORT).show();
+						selectB.setEnabled(true);
 						pw.showAsDropDown(positionTag);
 					}
 				}
@@ -181,7 +196,7 @@ public class MyLocationActivity extends MapActivity{
 
 	ToggleButton mapModeTB;
 	Button saveLocB;
-
+	Button tagFriendsB;
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -193,16 +208,16 @@ public class MyLocationActivity extends MapActivity{
 		mapModeTB=(ToggleButton) findViewById(R.id.mapModeTB);
 		mapModeTB.getBackground().setAlpha(90);
 		mapModeTB.setOnClickListener(new ButtonHandler());
-
+		
 		mView=(MapView) findViewById(R.id.MapView);
 
 		mView.displayZoomControls(true);
 		mView.setBuiltInZoomControls(true);
 
-		lListener=new MyLocationListener(getBaseContext(),mView); //subscribe to myLocationListener
+		//lListener=new MyLocationListener(getBaseContext(),mView); //subscribe to myLocationListener
 
 		lManager=(LocationManager) getSystemService(LOCATION_SERVICE);	//Get GPS service
-		lManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000, 10, lListener);	//Get the GPS provider
+		//lManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, CommonUtils.TIME_TO_UPDATE_LOCATION,CommonUtils.DISTANCE_TO_UPDATE_LOCATION, lListener);	//Get the GPS provider
 
 		positionTag=(TextView) findViewById(R.id.textView1);
 		backB=(Button) findViewById(R.id.backB);
@@ -210,10 +225,11 @@ public class MyLocationActivity extends MapActivity{
 		backB.setOnClickListener(new ButtonHandler());
 		selectB=(Button) findViewById(R.id.selectB);
 		selectB.setOnClickListener(new ButtonHandler());
-
+		selectB.setEnabled(false);
+		
 		mControl=mView.getController();
 
-		location = lManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		/*location = lManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 		if (location == null)
 			location =lManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 		if (location != null) {
@@ -226,7 +242,7 @@ public class MyLocationActivity extends MapActivity{
 			mControl.animateTo(gPoint, new Message());
 			mControl.setZoom(13);
 			mControl.setCenter(gPoint);
-		}
+		}*/
 
 		createPopup();	//creates to popup window for displaying later
 
@@ -250,11 +266,15 @@ public class MyLocationActivity extends MapActivity{
 				400, 100, true);
 		saveLocB=(Button) pw.getContentView().findViewById(R.id.selectLocB);
 		saveLocB.setOnClickListener(new ButtonHandler());
+		
+		tagFriendsB=(Button)pw.getContentView().findViewById(R.id.tagB);
+		tagFriendsB.setOnClickListener(new ButtonHandler());
 		// The code below assumes that the root container has an id called 'main'
 		pw.setBackgroundDrawable(new BitmapDrawable());
 		//pw.setOutsideTouchable(true);
 		//pw.showAsDropDown(mView);
 		pw.setTouchInterceptor(new PopupListener());
+		
 	}
 
 	@Override

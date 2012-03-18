@@ -18,27 +18,26 @@
         android:layout_centerHorizontal="true"
         android:baselineAligned="false"
         android:orientation="horizontal" >
-
+
         <TableRow
             android:id="@+id/tableRow1"
             android:layout_width="fill_parent"
             android:layout_height="0dp"
             android:layout_weight="1" >
-
-            <Button
-                android:id="@+id/backB"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:text="@string/back_str" />
-
+
             <Button
                 android:id="@+id/selectB"
-                android:layout_width="200dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="0"
+                android:layout_weight="1"
                 android:text="@string/select_loc" />
 
+            <Button
+                android:id="@+id/backB"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/back_str" />
         </TableRow>
 
     </TableLayout>

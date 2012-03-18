@@ -3,19 +3,37 @@ package com.gor.dev;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import com.gor.dev.entities.Location;
+import com.gor.dev.entities.Memo;
+import com.gor.dev.util.IOHandler;
 import com.gor.dev.util.LocationOrganizer;
+
+import android.app.AlertDialog;
 import android.app.ExpandableListActivity;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.View.OnLongClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
+import android.widget.ListView;
 import android.widget.SimpleExpandableListAdapter;
+import android.widget.Toast;
 
 /**This class presents the views information of saved locations to display
  * @author Thushan
  * 
  */
-public class LocationOrgActivity extends ExpandableListActivity {
+public class LocationOrgActivity extends ExpandableListActivity implements OnItemLongClickListener{
 
 	String groupName;
 	String subItemTitleName;
@@ -47,6 +65,12 @@ public class LocationOrgActivity extends ExpandableListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.locationorg);
 
+		locationInfo.add(new ArrayList<String>());
+		locationInfo.add(new ArrayList<String>());
+		locationInfo.add(new ArrayList<String>());
+		locationInfo.add(new ArrayList<String>());
+		locationInfo.add(new ArrayList<String>());
+
 		groupName="location_category";
 		subItemTitleName="location_name";
 		subItemDescName="location_description";
@@ -66,8 +90,9 @@ public class LocationOrgActivity extends ExpandableListActivity {
 				new String[] { subItemTitleName, subItemDescName },	//sub item content
 				new int[] { R.id.LocationNameTV, R.id.descriptionTV }	// Data under the keys above go into these TextViews
 		);
-
 		setListAdapter(myListAdapter);	
+		//registerForContextMenu(getExpandableListView());
+		getExpandableListView().setOnItemLongClickListener(this);
 	}
 
 	/**Obtain the saved locations from the 'locs' list
@@ -139,9 +164,17 @@ public class LocationOrgActivity extends ExpandableListActivity {
 
 	/* This function is called on each child click */
 	public boolean onChildClick( ExpandableListView parent, View v, int groupPosition,int childPosition,long id) {
-		System.out.println("Inside onChildClick at groupPosition = " + groupPosition +" Child clicked at position " + childPosition);
+		String item = ((Map<String,String>) getExpandableListAdapter().getChild(groupPosition, childPosition)).get(subItemDescName);
+		//Location currentMemo=(Location)LocationOrganizer.readLocation(getBaseContext(), );		
+		/*if(currentMemo==null){
+			Toast.makeText(this,"Error has occured", Toast.LENGTH_SHORT).show();
+		}else{
+			Toast.makeText(this,currentMemo.getSubject(), Toast.LENGTH_LONG).show();
+		}*/
+		Toast.makeText(getBaseContext(), item, Toast.LENGTH_LONG).show();
 		return true;
 	}
+
 	/* This function is called on expansion of the group */
 	public void  onGroupExpand  (int groupPosition) {
 		try{
@@ -150,4 +183,46 @@ public class LocationOrgActivity extends ExpandableListActivity {
 			System.out.println(" groupPosition Errrr +++ " + e.getMessage());
 		}
 	}
+
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,ContextMenuInfo menuInfo) {
+		if (v.getId()==getExpandableListView().getId()) {
+			ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo)menuInfo;
+			int type = ExpandableListView.getPackedPositionType(info.packedPosition);
+			if(type==1){
+				menu.setHeaderTitle("Options");
+				String[] menuItems = {"Edit","Remove","Close"};
+				for (int i = 0; i<menuItems.length; i++) {
+					menu.add(Menu.NONE, i, i, menuItems[i]);
+				}
+			}
+		}
+	}
+
+	@Override
+	public boolean onItemLongClick(AdapterView<?> adapter, View arg1, int arg2,
+			long id) {
+		// TODO Auto-generated method stub
+		if (ExpandableListView.getPackedPositionType(id) == ExpandableListView.PACKED_POSITION_TYPE_CHILD){
+			final String locationName=((Map <String,String>)adapter.getItemAtPosition(arg2)).get(subItemTitleName);
+			 AlertDialog errorDialog = new AlertDialog.Builder(this)
+			 	                .setMessage("Are you sure you want to delete "+locationName+"?")
+			 	                .setCancelable(true)
+			 	                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+			 	                    public void onClick(DialogInterface dialog, int id) {
+				 	                       
+				 	                }})
+			 	                .setNeutralButton("Yes", new DialogInterface.OnClickListener() {
+			 	                    public void onClick(DialogInterface dialog, int id) {
+			 	                       LocationOrganizer.deleteLocation(getBaseContext(),locationName);
+			 	                }
+			 	            }).create();
+			 errorDialog.show();
+		}
+		return false;
+	}
+
+
+
 }

@@ -26,5 +26,25 @@
     <string name="time_str">Time:</string>
     <string name="exmpl_date_str">01/01/2012</string>
     <string name="exmpl_time_str">12:00am</string>
+    <string name="loc_should_appear_str">Selected location will appear here</string>
+    <string name="change_loc_str">Change Location</string>
+    <string name="search_str">Search</string>
+    <string name="tag_frnds_str">Tag friends</string>
+    <string name="contacts_str">Friends to share</string>
+    <string name="send_str">Send</string>
+    <string name="close_str">Close</string>
+    <string name="cancel_str">Cancel</string>
+    <string name="click_on_button_str">Click on the button to select Reminder Location</string>
+    <string name="gps_query_time_str">GPS Query Interval</string>
+    <string name="gps_query_distance">GPS min change difference</string>
+    <string name="website">Visit www.go-reminder.com</string>
+    <string name="introduction_str">GO-Reminder is a geo-location based task reminder. Which enables ther user to create memos linked with geo-locations. User will be reminded or the task when he approaches near the location.</string>
+    <string name="abt_online_str">This icon is shown when GPS is active and the service is online.</string>
+    <string name="abt_at_location_str">This icon is shown when the user is near a location which is linked with a task in the list. User can find the task by expanding the notification list.</string>
+    <string name="abt_app_name_str">About GO-Reminder...</string>
+    <string name="tag_frnds_abt_str">Send a SMS to your friends, telling about this location.</string>
+    <string name="save_loc_abt_str">Save the locations in a organizer which will help you to organize neatly the known locations to you.</string>
+    <string name="create_memo_str">Create Memo</string>
+    <string name="create_memo_abt_str">Create a memo, set date and timer and/or location as you need. Application will take care of reminding you.</string>
 
 </resources>

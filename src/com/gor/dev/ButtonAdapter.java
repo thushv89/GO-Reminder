@@ -23,14 +23,28 @@ public class ButtonAdapter extends BaseAdapter{
 
 	private Context context;
 	private LayoutInflater li;
-	private int[] imageIds={R.drawable.create_memo,R.drawable.view_memo,R.drawable.location_org,R.drawable.my_location,R.drawable.about,R.drawable.exit};
-	private String[] textForCells={"Create Memo","View Memos","Location Organizer","My Location","About","Exit"};
-	
+	private int[] imageIds={R.drawable.create_memo,R.drawable.view_memo,R.drawable.location_org,R.drawable.my_location,R.drawable.about,R.drawable.gps};
+	private String[] textForCells={"Create Memo","View Memos","Locations","My Location","About","Deactivate GPS"};
+
 	class ButtonHandler implements View.OnClickListener
 	{
+		
+		
 		public void onClick(View v)
 		{		
-			if(v.getId()==0){
+			/*if(v.getId()==0){
+				if(!isActive){
+					isActive=true;
+					textForCells[0]="Deactivate";
+					context.startService(new Intent(context,NotificationService.class));
+				}else{
+					isActive=false;
+					textForCells[0]="Activate";
+					context.stopService(new Intent(context,NotificationService.class));
+				}
+				
+				
+			}else */if(v.getId()==0){
 				context.startActivity(new Intent(v.getContext(), CreateMemoActivity.class));
 				
 				//context.startService(new Intent(context, BackgroundWorker.class));
@@ -46,13 +60,10 @@ public class ButtonAdapter extends BaseAdapter{
 				context.startActivity(new Intent(v.getContext(),MyLocationActivity.class));
 			}
 			else if (v.getId()==4){
-				context.startActivity(new Intent(v.getContext(),TestActivity.class));
+				context.startActivity(new Intent(v.getContext(),AboutActivity.class));
 			}
 			else if (v.getId()==5){
-				Intent intent = new Intent(Intent.ACTION_MAIN);
-				intent.addCategory(Intent.CATEGORY_HOME);
-				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				context.startActivity(intent);
+				context.stopService(new Intent(context,NotificationService.class));
 			}
 		}
 	}
@@ -60,6 +71,7 @@ public class ButtonAdapter extends BaseAdapter{
 	public ButtonAdapter(Context c,LayoutInflater li) {
         context = c;
         this.li=li;
+        //gpsStatusTV=(TextView)li.inflate(R.layout.welcome, null);
     }
 	
 	@Override
@@ -95,7 +107,7 @@ public class ButtonAdapter extends BaseAdapter{
 		b.setScaleType(ImageView.ScaleType.FIT_CENTER);
 		b.setImageDrawable(context.getResources().getDrawable(imageIds[position]));
 		b.setOnClickListener(new ButtonHandler());
-		
+	
 		tv=(TextView)v.findViewById(R.id.icon_text);
 		tv.setText(textForCells[position]);
 	

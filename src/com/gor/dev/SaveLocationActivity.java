@@ -1,6 +1,7 @@
 package com.gor.dev;
 
 import com.gor.dev.entities.Location;
+import com.gor.dev.util.CommonUtils;
 import com.gor.dev.util.LocationOrganizer;
 
 import android.app.Activity;
@@ -11,6 +12,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 /**SaveLocationActivity displays the UI to save a location of interest of user 
  * @author Thushan
@@ -24,18 +27,25 @@ public class SaveLocationActivity extends Activity {
 	Spinner categorySP;	//
 	EditText categoryET;	//	
 	EditText descriptionET;	//
+	TextView locationTV;
 
 	private class ButtonHandler implements View.OnClickListener
 	{
 		public void onClick(View v)
 		{		
 			if(v.getId()==saveB.getId()){
+				if(validate()){
 				LocationOrganizer.writeLocation(getBaseContext(),getCurrentLocation());
 				startActivity(new Intent(v.getContext(),MyLocationActivity.class));
+				Toast.makeText(getBaseContext(), "Location saved successfully", Toast.LENGTH_SHORT).show();
+				}else{
+					Toast.makeText(getBaseContext(), "Please enter valid information", Toast.LENGTH_LONG).show();
+				}
 			}
 			else if(v.getId()==backB.getId()){
 				startActivity(new Intent(v.getContext(),MyLocationActivity.class));
 			}
+			
 		}
 
 
@@ -58,9 +68,16 @@ public class SaveLocationActivity extends Activity {
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		categorySP.setAdapter(adapter);
 
-		categoryET = (EditText) findViewById(R.id.categoryET);
 		descriptionET = (EditText) findViewById(R.id.descriptionET);
-
+		locationTV=(TextView)findViewById(R.id.locationTV);
+		Bundle bundle=getIntent().getExtras();
+		double[] coordinates;
+		String address;
+		if(bundle!=null){
+			coordinates=bundle.getDoubleArray("selectedCoordinates");
+			address=bundle.getString("selectedLocAddress");
+			locationTV.setText(CommonUtils.getFormattedLocationString(coordinates, address));
+		}
 		saveB.setOnClickListener(new ButtonHandler());
 		backB.setOnClickListener(new ButtonHandler());
 	}
@@ -86,4 +103,15 @@ public class SaveLocationActivity extends Activity {
 
 		return loc;
 	}
+	
+	private boolean validate(){
+		if(nameET.getText()==null || "".equals(nameET.getText().toString())){
+			return false;
+		}
+		if(locationTV.getText()==null || "".equals(locationTV.getText().toString())){
+			return false;
+		}
+		return true;
+	}
+	
 }

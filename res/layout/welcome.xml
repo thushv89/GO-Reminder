@@ -3,7 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-
+
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
@@ -11,15 +11,23 @@
         android:layout_gravity="center"
         android:text="@string/welcom_str"
         android:textAppearance="?android:attr/textAppearanceLarge" />
-
+
     <GridView
         android:id="@+id/gridView1"
         android:layout_width="fill_parent"
         android:layout_height="403dp"
+        android:layout_weight="0.83"
         android:horizontalSpacing="10dp"
         android:numColumns="3"
         android:verticalSpacing="10dp" >
-
     </GridView>
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/website"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
 </LinearLayout>

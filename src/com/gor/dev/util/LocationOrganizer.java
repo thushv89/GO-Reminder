@@ -46,6 +46,17 @@ public class LocationOrganizer {
 		return lread;
 	}
 
+	public static Location deleteLocation(Context context,String fName){
+		initialize(context);
+		Location loc = null;
+		File file=new File(workingDir+"/"+fName+".loc");
+		if(file.exists()){
+			loc=(Location) IOHandler.ReadObject(workingDir, fName);
+			file.delete();
+		}
+		return loc;
+	}
+	
 	/**Get a list of all the locations in storage
 	 * @param context	context of the directory system
 	 * @return	List of locations

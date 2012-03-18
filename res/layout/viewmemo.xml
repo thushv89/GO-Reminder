@@ -9,19 +9,40 @@
         android:layout_height="wrap_content"
         android:text="@string/view_memo_str"
         android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TableRow
+        android:id="@+id/tableRow1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+        <EditText
+            android:id="@+id/searchET"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/searchB"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".35"
+            android:text="@string/search_str" />
+
+    </TableRow>
 
     <ListView
-        android:id="@+id/list"
+        android:id="@+id/android:android.R.id.list"
         android:layout_width="fill_parent"
         android:layout_height="369dp"
-        android:layout_weight="0.74" >
+        android:layout_weight="0.74" 
+        android:visibility="gone">
 
     </ListView>
-
-    <Button
-        android:id="@+id/backB"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/back_str" />
+
+    <ListView
+        android:id="@+id/listView1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+    </ListView>
 
 </TableLayout>

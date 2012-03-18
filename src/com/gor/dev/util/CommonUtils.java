@@ -18,12 +18,10 @@ public class CommonUtils {
 	public static Double[] MY_CURRENT_LOCATION=new Double[2];	//my current location
 	public static boolean started=false;
 	public static boolean ended=true;
-	
-	public static void setButtonStyle(Button b,String text,int id){
-    	b.setText(text);
-    	b.setId(id);
-    }
-	
+	public static int QUERY_INTERVAL=90000;
+	public static int DISTANCE_TO_UPDATE_LOCATION=5;
+	public static int TIME_TO_UPDATE_LOCATION=5000;
+	public static Boolean test=false;
 	/**Takes the current date and time and convert to a string 
 	 * @return String that is converted from calendar instance
 	 */
@@ -34,26 +32,8 @@ public class CommonUtils {
 		return dateTime;
 	}
 	
-	
-	/**Takes a Time object and convert to a string
-	 * @param time Time to be converted
-	 * @return	String of time converted from Time object
-	 */
-	public static String timeToString(Time time){
-		return time.hour+":"+time.minute;
+	public static String getFormattedLocationString(double[] coordinates,String address){
+		return address+" "+"Lat: "+coordinates[0]+" Lon: "+coordinates[1];
 	}
 	
-	
-	/**Takes a string and convert to a time object
-	 * @param time String of time
-	 * @return Time object created from the time string
-	 */
-	public static Time stringToTime(String time){
-		Time t=new Time();
-		String[] tokens=time.split(":");
-		t.hour=Integer.parseInt(tokens[0]);
-		t.minute=Integer.parseInt(tokens[1]);
-		
-		return t;
-	}
 }
