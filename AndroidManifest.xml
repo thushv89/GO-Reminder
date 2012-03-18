@@ -30,6 +30,8 @@
         <activity android:name=".ViewMemoActivity"></activity>
         <activity android:name=".TestActivity"></activity>
         <activity android:name=".SaveLocationActivity"></activity>
+        <activity android:name=".LocationTabActivity"></activity>
+        <activity android:name=".DateTimeTabActivity"></activity>
     </application>
 
 </manifest>

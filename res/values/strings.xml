@@ -20,5 +20,11 @@
     <string name="cat_friends_str">Friends</string>
     <string name="cat_other_str">Other</string>
     <string name="save_loc_str">Save Location</string>
+    <string name="enable_date_time">Enable set Date &amp; Time</string>
+    <string name="enable_location">Enable set \"Location\"</string>
+    <string name="date_str">Date:</string>
+    <string name="time_str">Time:</string>
+    <string name="exmpl_date_str">01/01/2012</string>
+    <string name="exmpl_time_str">12:00am</string>
 
 </resources>

@@ -1,6 +1,8 @@
 package com.gor.dev;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
@@ -15,6 +17,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -43,6 +47,7 @@ public class MyLocationActivity extends MapActivity{
 	MapController mControl;	//Control properties of the map view
 	GeoPoint gPoint;	//Geo point represent a single pair of longitude, lattitude
 	GeoPoint selectedLoc;
+	String selectedLocAddress;
 	MapView mView;	//Responsible for displaying the content of google maps
 	Button backB;
 	Button selectB;
@@ -105,6 +110,7 @@ public class MyLocationActivity extends MapActivity{
 				double[] coordinates={selectedLoc.getLatitudeE6()/1E6,selectedLoc.getLongitudeE6()/1E6};
 				Intent createMemoIntent=new Intent(getApplicationContext(),CreateMemoActivity.class);
 				createMemoIntent.putExtra("selectedCoordinates", coordinates);
+				createMemoIntent.putExtra("selectedLocAddress", getAddress(selectedLoc));
 				startActivity(createMemoIntent); 										
 			}//Mode changing 'Zoom/Pan' and 'Marker'
 			else if(v.getId()==mapModeTB.getId()){
@@ -119,6 +125,24 @@ public class MyLocationActivity extends MapActivity{
 		}
 	}
 
+	private String getAddress(GeoPoint p){
+		selectedLocAddress="";
+		Geocoder gCoder=new Geocoder(getBaseContext(),Locale.getDefault());
+		List<Address> addresses = null;
+		try {
+			addresses=gCoder.getFromLocation(p.getLatitudeE6()/1E6,p.getLongitudeE6()/1E6,1);
+			Thread.sleep(500);
+			for (Address address : addresses) {
+		        selectedLocAddress+=("\n" + address.getAddressLine(0));
+		      }
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		return selectedLocAddress;
+	}
+	
 	/**Listens to popup window events
 	 * @author Thushan
 	 *
