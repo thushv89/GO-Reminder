@@ -143,13 +143,15 @@
                 android:id="@+id/tableRow7"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
-
+
                 <Button
                     android:id="@+id/selectLocB"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:drawableLeft="@drawable/my_location"
                     android:text="@string/select_loc" />
+
             </TableRow>
 
             <TableRow
@@ -177,11 +179,12 @@
                     android:text="@string/empty_str"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
             </TableRow>
-
+
             <TableRow
                 android:id="@+id/tableRow1"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content" >
+                android:layout_height="wrap_content"
+                android:background="@color/light_gray" >
 
                 <Button
                     android:id="@+id/saveB"

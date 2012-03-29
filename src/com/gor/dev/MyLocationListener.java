@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -31,12 +32,16 @@ public class MyLocationListener implements LocationListener {
 	String workingDir;
 	NotificationManager nm;
 	Notification memoNotif;
+	boolean ranInitial=false;	//maintain whether AllMemos were updated with notification id initially
+	
 	public MyLocationListener(Context context,MapView mView){
 		this.context=context;
 		workingDir=context.getFilesDir()+"/Memos";
 		this.mView=mView;
 		mControl=mView.getController();
 		nm=(NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+		
+
 	}
 	public MyLocationListener(Context context){
 		this.context=context;
@@ -60,7 +65,7 @@ public class MyLocationListener implements LocationListener {
 			CommonUtils.MY_CURRENT_LOCATION[0]=location.getLatitude()*1E6;
 			CommonUtils.MY_CURRENT_LOCATION[1]=location.getLongitude()*1E6;
 
-			Toast.makeText(context, "Location changed: lat:"+CommonUtils.MY_CURRENT_LOCATION[0]+" longi:"+CommonUtils.MY_CURRENT_LOCATION[1], Toast.LENGTH_SHORT).show();
+			Toast.makeText(context, "Your location: "+CommonUtils.getFormattedLocationString(CommonUtils.MY_CURRENT_LOCATION,""), Toast.LENGTH_SHORT).show();
 			checkNearLocation();
 			if(mView!=null && mControl!=null){
 				mControl.animateTo(gp);//go to user's location on the map
@@ -72,7 +77,8 @@ public class MyLocationListener implements LocationListener {
 
 	private void checkNearLocation(){
 		String[] files=IOHandler.listItemsInDir(workingDir);
-		if(files.length!=CommonUtils.ALL_MEMOS.size()){
+		if(!ranInitial || files.length!=CommonUtils.ALL_MEMOS.size()){
+			ranInitial=true;
 			CommonUtils.ALL_MEMOS.clear();
 			startID=10000;
 			for(String fName:files){
@@ -86,9 +92,10 @@ public class MyLocationListener implements LocationListener {
 		
 		for(Memo memo:CommonUtils.ALL_MEMOS){
 			if(memo.getCoordinates()!=null){
-			double diff1=Math.abs(CommonUtils.MY_CURRENT_LOCATION[0]-memo.getCoordinates()[0]);
-			double diff2=Math.abs(CommonUtils.MY_CURRENT_LOCATION[1]-memo.getCoordinates()[1]);
-		
+			Double diff1=Math.abs(CommonUtils.MY_CURRENT_LOCATION[0]-memo.getCoordinates()[0]);
+			Double diff2=Math.abs(CommonUtils.MY_CURRENT_LOCATION[1]-memo.getCoordinates()[1]);
+			//Created to check value of my location
+			Toast.makeText(context, diff1+" "+diff2, Toast.LENGTH_SHORT).show();
 			if(Math.abs(CommonUtils.MY_CURRENT_LOCATION[0]-memo.getCoordinates()[0])<1000 &&
 					Math.abs(CommonUtils.MY_CURRENT_LOCATION[1]-memo.getCoordinates()[1])<1000){
 				//memosToRemind.add(memo);
@@ -110,13 +117,12 @@ public class MyLocationListener implements LocationListener {
 	
 	@Override
 	public void onProviderDisabled(String arg0) {
-		Toast.makeText(context, 
-				"Sorry Provider is not available at the momonet", Toast.LENGTH_LONG).show();
+		CommonUtils.GPS_IS_ENABLED=false;
 	}
 
 	@Override
 	public void onProviderEnabled(String arg0) {
-		// TODO Auto-generated method stub
+		CommonUtils.GPS_IS_ENABLED=true;
 	}
 
 	@Override

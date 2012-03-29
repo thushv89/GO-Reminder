@@ -4,21 +4,27 @@ package com.gor.dev;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-
 import com.gor.dev.entities.Memo;
 import com.gor.dev.util.IOHandler;
-
+import com.gor.dev.util.LocationOrganizer;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.Toast;
@@ -32,7 +38,10 @@ public class ViewMemoActivity extends ListActivity {
 	ArrayList<String> memoSubjs=new ArrayList<String>();	//Subjects of all the memos present
 	ArrayAdapter<String> adapter;	//Adapter for the list view
 	String workingDir="";
-	
+	Dialog dialog;
+	Button dialog_searchB;
+	Button dialog_closeB;
+	EditText dialog_searchET;
 	/** Called when the activity is first created. */
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
@@ -40,6 +49,7 @@ public class ViewMemoActivity extends ListActivity {
 		workingDir=getFilesDir()+"/Memos";
 		//String[] subjects=getAllMemoSubjects(IOHandler.listItemsInDir(workingDir));
 		String[] test=IOHandler.listItemsInDir(workingDir);
+		Toast.makeText(getBaseContext(), test.length+" Memos found", Toast.LENGTH_SHORT).show();
 		memoSubjs.addAll(Arrays.asList(getFormattedFileNames(test)));
 
 		//set up the adapter
@@ -53,7 +63,82 @@ public class ViewMemoActivity extends ListActivity {
 
 	}
 
+	//This is for the menu created by clicking menu button
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.view_memo_menu, menu);
+	    return true;
+	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if(item.getItemId()==R.id.search){
+			
+			dialog = new Dialog(this);
+			dialog.setContentView(R.layout.view_memo_search_dialog);
+			dialog_searchB=(Button)dialog.findViewById(R.id.searchB);
+			dialog_closeB=(Button)dialog.findViewById(R.id.closeB);
+			dialog_searchET=(EditText)dialog.findViewById(R.id.searchTermET);
+			dialog_searchB.setOnClickListener(new DialogButtonHandler());
+			dialog_closeB.setOnClickListener(new DialogButtonHandler());
+			dialog.setTitle("Search Memos");
+			dialog.getWindow().setLayout(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+			dialog.show();
+			
+		}else if(item.getItemId()==R.id.delete_all){
+			
+			 AlertDialog deleteDialog = new AlertDialog.Builder(this)
+              .setMessage("Are you sure you want to delete all the memos?")
+              .setCancelable(true)
+              .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                  public void onClick(DialogInterface dialog, int id) {
+	                       
+	                }})
+              .setNeutralButton("Yes", new DialogInterface.OnClickListener() {
+                  public void onClick(DialogInterface dialog, int id) {
+                     String[] fileNames=IOHandler.listItemsInDir(workingDir);
+                     for(String fileName:fileNames){
+                    	 IOHandler.ifExistDelete(workingDir, fileName);
+                     }
+                     Toast.makeText(getBaseContext(), "All Memos deleted successfully", Toast.LENGTH_LONG).show();
+              }
+          }).create();
+			 deleteDialog.show();
+			 clearListView();
+		}
+		
+		return true;
+	}
+	
+	//Handles button events of the search dialog
+	class DialogButtonHandler implements OnClickListener{
+
+		@Override
+		public void onClick(View v) {
+			if(v.getId()==dialog_searchB.getId()){
+				//conduct the search
+				adapter.clear();
+				String search_term=dialog_searchET.getText().toString();
+				String[] test=IOHandler.listItemsInDir(workingDir);
+				String[] memoFNs=getFormattedFileNames(test);
+				int size=memoFNs.length;
+				for(String m:memoFNs){
+					Memo currentMemo=(Memo)IOHandler.ReadObject(getFilesDir()+"/Memos",reverseFormatting(m));
+					if(currentMemo != null && currentMemo.getSubject().contains(search_term)){
+						adapter.add(m);
+					}
+				}
+				dialog.dismiss();
+			}else if(v.getId()==dialog_closeB.getId()){
+				dialog.dismiss();
+			}
+		}
+		
+	}
+	
+	//File names are formatted to show in the form of
+	// "Memo mm/dd/yyyy hh:mm:ss" this is more intuitive
 	private String[] getFormattedFileNames(String[] fileNames){
 		String[] formattedNames=new String[fileNames.length];
 		for(int i=0;i<fileNames.length;i++){
@@ -67,6 +152,8 @@ public class ViewMemoActivity extends ListActivity {
 		return formattedNames;		
 	} 
 	
+	//reverse the above described string to a raw filename string
+	//"Memo mm/dd/yyyy hh:mm:ss" --> Memo-mm-dd-yyyy-hh-mm-ss.mem
 	private String reverseFormatting(String formatted){
 		String[] tokensAfterSlash=formatted.split("/");
 		String part1=tokensAfterSlash[0].split(" ")[0];
@@ -82,6 +169,8 @@ public class ViewMemoActivity extends ListActivity {
 		String finalString=part1+"-"+part2+"-"+part3+"-"+part4+"-"+part5+"-"+part6+"-"+part7+".mem";
 		return finalString;
 	}
+	
+	//Context menu with 3 menu items which appears on a long click
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,ContextMenuInfo menuInfo) {
 		if (v.getId()==getListView().getId()) {
@@ -130,5 +219,10 @@ public class ViewMemoActivity extends ListActivity {
 		}else{
 			Toast.makeText(this,currentMemo.getSubject(), Toast.LENGTH_LONG).show();
 		}
+	}
+	
+	private void clearListView(){
+		adapter.clear();
+		adapter.notifyDataSetChanged();
 	}
 }

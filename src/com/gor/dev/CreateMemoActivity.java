@@ -83,10 +83,8 @@ public class CreateMemoActivity extends Activity{
 	{
 		public void onClick(View v)
 		{		
-			if(v.getId()==backB.getId()){
-				startActivity(new Intent(v.getContext(),WelcomeActivity.class));
-			}
-			else if(v.getId()==selectLocB.getId()){
+			
+			if(v.getId()==selectLocB.getId()){
 				Memo memo=makeAMemoNow("temp_id");
 				IOHandler.WriteObject(memo, workingDir+"/"+"temp.mem");
 				startActivity(new Intent(v.getContext(),MyLocationActivity.class));
@@ -105,6 +103,7 @@ public class CreateMemoActivity extends Activity{
 				if(validated){
 					String currentTimeDateStr=CommonUtils.getCurrentDateTimeString();
 					Memo memo=makeAMemoNow(currentTimeDateStr);
+					IOHandler.createDirIfNotExist(getFilesDir(), "Memos");
 					IOHandler.WriteObject(memo, 
 							workingDir+"/"+currentTimeDateStr+".mem");
 					Toast.makeText(v.getContext(), "Memo saved successfully", Toast.LENGTH_SHORT).show();
@@ -123,7 +122,6 @@ public class CreateMemoActivity extends Activity{
 	EditText memoTime;
 	Button selectLocB;
 	Button saveMemoB;
-	Button backB;
 	TextView locV;
 	CheckBox dateTimeCB;
 	/** Called when the activity is first created. */
@@ -139,7 +137,6 @@ public class CreateMemoActivity extends Activity{
 		subjectET=(EditText)findViewById(R.id.subjectET);
 		locV=(TextView)findViewById(R.id.locDetails);
 		saveMemoB=(Button)findViewById(R.id.saveB);
-		backB=(Button)findViewById(R.id.backB);
 		dateTimeCB=(CheckBox)findViewById(R.id.setDateTimeCB);
 		
 		memoDate=(EditText)findViewById(R.id.dateET);
@@ -154,7 +151,6 @@ public class CreateMemoActivity extends Activity{
 			fillViewsWithMemo((Memo)temp);
 		}
 
-		backB.setOnClickListener(new ButtonHandler());
 		selectLocB.setOnClickListener(new ButtonHandler());
 		saveMemoB.setOnClickListener(new ButtonHandler());
 		dateTimeCB.setOnClickListener(new ButtonHandler());
@@ -166,12 +162,13 @@ public class CreateMemoActivity extends Activity{
 			if(location!=null){
 				
 				locV.setText(CommonUtils.getFormattedLocationString(location, locationAddress));
-			}
-			Memo editMemo=(Memo)extras.getSerializable("editMemo");
-			if(editMemo!=null){
-				fillViewsWithMemo(editMemo);
-				isEditScreen=true;
-			}
+			}			
+		}
+		
+		Memo editMemo=(Memo)IOHandler.ifExistDelete(workingDir, "temp.mem");
+		if(editMemo!=null){
+			fillViewsWithMemo(editMemo);
+			isEditScreen=true;
 		}
 	}
 
@@ -185,9 +182,11 @@ public class CreateMemoActivity extends Activity{
 		memoTime.setText(m.getTime());
 		
 		if(m.isDateTimeEnabled()){
-			dateTimeCB.setEnabled(true);
+			memoDate.setEnabled(true);
+			memoTime.setEnabled(true);
 		}else{
-			dateTimeCB.setEnabled(false);
+			memoDate.setEnabled(false);
+			memoTime.setEnabled(false);
 		}
 		
 		if(m.getCoordinates()!=null){

@@ -1,5 +1,6 @@
 package com.gor.dev.util;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -15,13 +16,14 @@ import android.widget.Button;
 public class CommonUtils {
 	
 	public static ArrayList<Memo> ALL_MEMOS=new ArrayList<Memo>();	//all memos saved in the device
-	public static Double[] MY_CURRENT_LOCATION=new Double[2];	//my current location
+	public static double[] MY_CURRENT_LOCATION=new double[2];	//my current location
 	public static boolean started=false;
 	public static boolean ended=true;
 	public static int QUERY_INTERVAL=90000;
 	public static int DISTANCE_TO_UPDATE_LOCATION=5;
 	public static int TIME_TO_UPDATE_LOCATION=5000;
 	public static Boolean test=false;
+	public static Boolean GPS_IS_ENABLED=true;
 	/**Takes the current date and time and convert to a string 
 	 * @return String that is converted from calendar instance
 	 */
@@ -33,7 +35,8 @@ public class CommonUtils {
 	}
 	
 	public static String getFormattedLocationString(double[] coordinates,String address){
-		return address+" "+"Lat: "+coordinates[0]+" Lon: "+coordinates[1];
+		DecimalFormat df=new DecimalFormat();
+		return address+" "+"Lat: "+String.format("%.4f",coordinates[0]/1E6)+" Lon: "+String.format("%.4f",coordinates[1]/1E6);
 	}
 	
 }

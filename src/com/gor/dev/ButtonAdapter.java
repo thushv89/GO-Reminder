@@ -104,6 +104,7 @@ public class ButtonAdapter extends BaseAdapter{
 		
 		b=(ImageButton) v.findViewById(R.id.imgButton);
 		b.setId(position);
+		b.setBackgroundResource(R.drawable.transparent);
 		b.setScaleType(ImageView.ScaleType.FIT_CENTER);
 		b.setImageDrawable(context.getResources().getDrawable(imageIds[position]));
 		b.setOnClickListener(new ButtonHandler());

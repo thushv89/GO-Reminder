@@ -26,7 +26,6 @@ public class TagFriendsActivity extends Activity {
 	EditText descET;
 	TextView locTV;
 	Button sendB;
-	Button backB;
 	String sms;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -85,8 +84,6 @@ public class TagFriendsActivity extends Activity {
 		descET=(EditText)findViewById(R.id.descET);
 		locTV=(TextView)findViewById(R.id.locTV);
 		sendB=(Button)findViewById(R.id.sendB);
-		backB=(Button)findViewById(R.id.backB);
-		backB.setOnClickListener(new ButtonHandler());
 		sendB.setOnClickListener(new ButtonHandler());
 	}
 
@@ -102,9 +99,7 @@ public class TagFriendsActivity extends Activity {
 
 		@Override
 		public void onClick(View v) {
-			if(v.getId()==backB.getId()){
-				Toast.makeText(getBaseContext(), "SMS sent successfully", Toast.LENGTH_SHORT);
-			}else if(v.getId()==sendB.getId()){
+			if(v.getId()==sendB.getId()){
 				String[] contacts=friendsMAC.getText().toString().split(",");
 				for(int i=0;i<contacts.length-1;i++){
 					sendSMS(contacts[i].split(";")[1],descET.getText().toString());

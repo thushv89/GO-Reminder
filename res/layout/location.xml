@@ -18,12 +18,20 @@
         android:layout_centerHorizontal="true"
         android:baselineAligned="false"
         android:orientation="horizontal" >
-
+
         <TableRow
             android:id="@+id/tableRow1"
             android:layout_width="fill_parent"
             android:layout_height="0dp"
             android:layout_weight="1" >
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".5"
+                android:text="@string/empty_str"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <Button
                 android:id="@+id/selectB"
@@ -31,13 +39,15 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/select_loc" />
-
-            <Button
-                android:id="@+id/backB"
+
+            <TextView
+                android:id="@+id/TextView01"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/back_str" />
+                android:layout_weight=".5"
+                android:text="@string/empty_str"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
         </TableRow>
 
     </TableLayout>

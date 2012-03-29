@@ -21,7 +21,7 @@ import android.widget.Toast;
  */
 public class SaveLocationActivity extends Activity {
 
-	Button backB;	//references for various views present in the layout
+	//references for various views present in the layout
 	Button saveB;	//
 	EditText nameET;	//
 	Spinner categorySP;	//
@@ -36,15 +36,14 @@ public class SaveLocationActivity extends Activity {
 			if(v.getId()==saveB.getId()){
 				if(validate()){
 				LocationOrganizer.writeLocation(getBaseContext(),getCurrentLocation());
+				Toast.makeText(getBaseContext(), "Location saved successfully", Toast.LENGTH_LONG).show();
 				startActivity(new Intent(v.getContext(),MyLocationActivity.class));
-				Toast.makeText(getBaseContext(), "Location saved successfully", Toast.LENGTH_SHORT).show();
+				
 				}else{
 					Toast.makeText(getBaseContext(), "Please enter valid information", Toast.LENGTH_LONG).show();
 				}
 			}
-			else if(v.getId()==backB.getId()){
-				startActivity(new Intent(v.getContext(),MyLocationActivity.class));
-			}
+
 			
 		}
 
@@ -57,7 +56,6 @@ public class SaveLocationActivity extends Activity {
 		//initial setup
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.savelocation);
-		backB = (Button) findViewById(R.id.backB);
 		saveB = (Button) findViewById(R.id.saveB);
 		nameET = (EditText) findViewById(R.id.nameET);
 		categorySP=(Spinner) findViewById(R.id.categorySP);
@@ -79,7 +77,6 @@ public class SaveLocationActivity extends Activity {
 			locationTV.setText(CommonUtils.getFormattedLocationString(coordinates, address));
 		}
 		saveB.setOnClickListener(new ButtonHandler());
-		backB.setOnClickListener(new ButtonHandler());
 	}
 
 	/**Creates an instance of location using data present in the activity

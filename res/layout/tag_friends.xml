@@ -81,18 +81,20 @@
         android:layout_height="wrap_content"
         android:text="@string/empty_str"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
     <TableRow
         android:id="@+id/tableRow1"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
-
-        <Button
-            android:id="@+id/backB"
+        android:layout_height="wrap_content"
+        android:background="@color/light_gray" >
+
+        <TextView
+            android:id="@+id/textView10"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/back_str" />
+            android:text="@string/empty_str"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <Button
             android:id="@+id/sendB"
@@ -100,6 +102,15 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/send_str" />
+
+        <TextView
+            android:id="@+id/textView9"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/empty_str"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
     </TableRow>
 
 </TableLayout>

@@ -69,6 +69,8 @@ public class IOHandler {
 	 */
 	public static String[] listItemsInDir(String dir){
 		File file=new File(dir);
+		String[] list=file.list();
+		
 		return file.list();
 	}
 

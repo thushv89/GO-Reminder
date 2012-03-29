@@ -45,18 +45,13 @@ public class LocationOrgActivity extends ExpandableListActivity implements OnIte
 	 */
 	private String categories[] = {"Family","Shopping","Friends","Work","Other"};
 
-	/*private String locationPerCategory[][] = {
-			{"Name1","desc1","Name2","desc2","Name3","desc3"},
-			{"Name4","desc4","Name5","desc5","Name6","desc6"},
-			{"Name7","desc7","Name8","desc8","Name9","desc9"},
-	};*/
-
 	/**This list keeps all the loaded locations from memory in a easy-to-access
 	 * way for the adapter
 	 * 
 	 */
 	private ArrayList<ArrayList<String>> locationInfo=new ArrayList<ArrayList<String>>();
 
+	SimpleExpandableListAdapter myListAdapter;
 	/** Called when the activity is first created. */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -80,7 +75,7 @@ public class LocationOrgActivity extends ExpandableListActivity implements OnIte
 		makeLocationList();
 
 		//Handles the expandable list view items and the view itself 
-		SimpleExpandableListAdapter myListAdapter = new SimpleExpandableListAdapter(getBaseContext(), 
+		myListAdapter = new SimpleExpandableListAdapter(getBaseContext(), 
 				createGroupList(),
 				R.layout.group_row, 
 				new String[] { groupName },
@@ -203,10 +198,9 @@ public class LocationOrgActivity extends ExpandableListActivity implements OnIte
 	@Override
 	public boolean onItemLongClick(AdapterView<?> adapter, View arg1, int arg2,
 			long id) {
-		// TODO Auto-generated method stub
 		if (ExpandableListView.getPackedPositionType(id) == ExpandableListView.PACKED_POSITION_TYPE_CHILD){
 			final String locationName=((Map <String,String>)adapter.getItemAtPosition(arg2)).get(subItemTitleName);
-			 AlertDialog errorDialog = new AlertDialog.Builder(this)
+			 AlertDialog deleteDialog = new AlertDialog.Builder(this)
 			 	                .setMessage("Are you sure you want to delete "+locationName+"?")
 			 	                .setCancelable(true)
 			 	                .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -218,11 +212,18 @@ public class LocationOrgActivity extends ExpandableListActivity implements OnIte
 			 	                       LocationOrganizer.deleteLocation(getBaseContext(),locationName);
 			 	                }
 			 	            }).create();
-			 errorDialog.show();
+			 deleteDialog.show();
+			 updateListAfterDelete();
 		}
 		return false;
 	}
 
-
+	//update the list content after the delete
+	//not working still
+	private void updateListAfterDelete(){
+		locs=LocationOrganizer.getAllLocations(getBaseContext());
+		makeLocationList();
+		myListAdapter.notifyDataSetChanged();
+	}
 
 }

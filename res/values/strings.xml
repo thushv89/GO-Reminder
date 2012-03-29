@@ -46,5 +46,20 @@
     <string name="save_loc_abt_str">Save the locations in a organizer which will help you to organize neatly the known locations to you.</string>
     <string name="create_memo_str">Create Memo</string>
     <string name="create_memo_abt_str">Create a memo, set date and timer and/or location as you need. Application will take care of reminding you.</string>
+    <string name="menu_view_memo_search_str">Search Memos</string>
+    <string name="menu_view_memo_delete_all">Clear All</string>
+    <color name="light_gray">#b0b0b0</color>
+    <string name="view_memo_search_dialog_search_term_str">"Search "</string>
+    <color name="black">#000000</color>
+    <string name="welcome_activity_app_description_str">GO-Reminder is a geo-location based task reminder. Specify your task and the location. And GO-Reminder will take care of the rest.</string>
+    <string name="welcome_activity_take_a_tour_str">Take a tour</string>
+    <string name="welcome_activity_loc_org">Location Organizer</string>
+    <string name="welcome_activity_my_location_str">My Current Location</string>
+    <color name="gor_green">#004217</color>
+    <color name="dark_gray">#a0a0a0</color>
+    <string name="welcom_activity_status_str">Current Status</string>
+    <string name="about_activity_next_str">Next Page</string>
+    <color name="white">#ffffff</color>
+    <color name="current_status_sub_text">#d0d0d0</color>
 
 </resources>

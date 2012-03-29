@@ -37,6 +37,8 @@ public class NotificationService extends Service {
 	Context context;
 	int startID;
 	Thread locUpdateThread;
+	int locationNotificationID=1000;
+	
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -49,10 +51,20 @@ public class NotificationService extends Service {
 				CommonUtils.DISTANCE_TO_UPDATE_LOCATION, lListener);	//Get the GPS provider
 		workingDir=getBaseContext().getFilesDir()+"/Memos";
 		nm=(NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-		Toast.makeText(this,"Service created at "+time.getTime(),Toast.LENGTH_LONG).show();
+		//Toast.makeText(this,"Service created at "+time.getTime(),Toast.LENGTH_LONG).show();
+		
+		if(!lManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+			CommonUtils.GPS_IS_ENABLED=false;
+		}else{
+			CommonUtils.GPS_IS_ENABLED=true;
+		}
 
 	}
 
+	
+	/**
+	 * This method runs periodically doing whatever specified inside
+	 */
 	private void runUpdate() {
 		timer.scheduleAtFixedRate(new TimerTask(){ 
 			public void run() {
@@ -63,8 +75,6 @@ public class NotificationService extends Service {
 					startID=20000;
 					for(String fName:files){
 						Memo m=(Memo)IOHandler.ReadObject(workingDir, fName);
-						m.setNotificationID(startID);
-						startID++;
 						CommonUtils.ALL_MEMOS.add(m);
 						
 					}
@@ -73,13 +83,18 @@ public class NotificationService extends Service {
 				
 				for(Memo memo:CommonUtils.ALL_MEMOS){
 					if(memo.isDateTimeEnabled()){
-						isMatchDateTime(memo.getDate(), memo.getTime());
+						//isMatchDateTime(memo.getDate(), memo.getTime());
+						setAlarm(memo.getDate(), memo.getTime());
 					}
 				}
 				
 			}}, 100, CommonUtils.QUERY_INTERVAL);
 	}
 	
+	/** This method sets the alarm to whatever time speficied
+	 * @param dateStr date in string format
+	 * @param time time in string format
+	 */
 	private void setAlarm(String dateStr,String time){
 		Calendar cal = Calendar.getInstance();
 		
@@ -136,15 +151,6 @@ public class NotificationService extends Service {
 		
 	}
 	
-	private void showAtLocationNotification(Memo m){		
-		CharSequence text=m.getSubject();
-		Notification nf=new Notification(R.drawable.at_location, text, System.currentTimeMillis());
-		nf.iconLevel=2;
-		PendingIntent contentIntn=PendingIntent.getActivity(this,0,new Intent(this,ViewMemoActivity.class), 0);		
-		nf.setLatestEventInfo(this, "Reminder/s",text, contentIntn);
-		//index++;
-		nm.notify(m.getNotificationID(), nf);		
-	}
 	
 	private boolean isMatchDateTime(String dateStr,String time){
 		Calendar c=Calendar.getInstance();

@@ -26,6 +26,7 @@ import android.location.LocationManager;
 
 import android.os.Bundle;
 import android.os.Message;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -43,7 +44,7 @@ import android.widget.ToggleButton;
  */
 public class MyLocationActivity extends MapActivity{
 
-	LocationManager lManager;	//location manager to obtain GPS service
+	//LocationManager lManager;	//location manager to obtain GPS service
 	//LocationListener lListener;	//get user's current location periodically
 	Location location;
 	MapController mControl;	//Control properties of the map view
@@ -51,7 +52,6 @@ public class MyLocationActivity extends MapActivity{
 	GeoPoint selectedLoc;
 	String selectedLocAddress;
 	MapView mView;	//Responsible for displaying the content of google maps
-	Button backB;
 	Button selectB;
 	TextView positionTag;
 	PopupWindow pw;	//A window which contains 2 buttons appears when user clicks on the map
@@ -104,11 +104,8 @@ public class MyLocationActivity extends MapActivity{
 	{
 		public void onClick(View v)
 		{	
-			//If 'back' button was clicked
-			if(v.getId()==backB.getId()){
-				startActivity(new Intent(v.getContext(), WelcomeActivity.class));
-			}//If 'select location' button was clicked
-			else if(v.getId()==selectB.getId()){
+
+			if(v.getId()==selectB.getId()){
 				double[] coordinates={selectedLoc.getLatitudeE6(),selectedLoc.getLongitudeE6()};
 				Intent createMemoIntent=new Intent(getApplicationContext(),CreateMemoActivity.class);
 				createMemoIntent.putExtra("selectedCoordinates", coordinates);
@@ -206,9 +203,9 @@ public class MyLocationActivity extends MapActivity{
 
 
 		mapModeTB=(ToggleButton) findViewById(R.id.mapModeTB);
-		mapModeTB.getBackground().setAlpha(90);
+		mapModeTB.getBackground().setAlpha(80);
 		mapModeTB.setOnClickListener(new ButtonHandler());
-		
+
 		mView=(MapView) findViewById(R.id.MapView);
 
 		mView.displayZoomControls(true);
@@ -216,33 +213,16 @@ public class MyLocationActivity extends MapActivity{
 
 		//lListener=new MyLocationListener(getBaseContext(),mView); //subscribe to myLocationListener
 
-		lManager=(LocationManager) getSystemService(LOCATION_SERVICE);	//Get GPS service
+		
 		//lManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, CommonUtils.TIME_TO_UPDATE_LOCATION,CommonUtils.DISTANCE_TO_UPDATE_LOCATION, lListener);	//Get the GPS provider
 
 		positionTag=(TextView) findViewById(R.id.textView1);
-		backB=(Button) findViewById(R.id.backB);
 
-		backB.setOnClickListener(new ButtonHandler());
 		selectB=(Button) findViewById(R.id.selectB);
 		selectB.setOnClickListener(new ButtonHandler());
 		selectB.setEnabled(false);
 		
 		mControl=mView.getController();
-
-		/*location = lManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		if (location == null)
-			location =lManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-		if (location != null) {
-			double lat = location.getLatitude();
-			double lng = location.getLongitude();
-			Toast.makeText(getBaseContext(),
-					"Location Are" + lat + ":" + lng, Toast.LENGTH_SHORT)
-					.show();
-			gPoint = new GeoPoint((int) (lat * 1E6), (int) (lng * 1E6));
-			mControl.animateTo(gPoint, new Message());
-			mControl.setZoom(13);
-			mControl.setCenter(gPoint);
-		}*/
 
 		createPopup();	//creates to popup window for displaying later
 
@@ -260,10 +240,16 @@ public class MyLocationActivity extends MapActivity{
 	 * 
 	 */
 	public void createPopup(){
+		//We're using this to get the device width, so the popup window will
+		//fit just rit.
+		DisplayMetrics metrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
 		LayoutInflater inflater = (LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		pw = new PopupWindow(
 				inflater.inflate(R.layout.popup, null, false), 
-				400, 100, true);
+				metrics.widthPixels, 100, true);
+		
 		saveLocB=(Button) pw.getContentView().findViewById(R.id.selectLocB);
 		saveLocB.setOnClickListener(new ButtonHandler());
 		
@@ -271,6 +257,7 @@ public class MyLocationActivity extends MapActivity{
 		tagFriendsB.setOnClickListener(new ButtonHandler());
 		// The code below assumes that the root container has an id called 'main'
 		pw.setBackgroundDrawable(new BitmapDrawable());
+	
 		//pw.setOutsideTouchable(true);
 		//pw.showAsDropDown(mView);
 		pw.setTouchInterceptor(new PopupListener());
